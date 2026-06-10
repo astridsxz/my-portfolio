@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import MagneticButton from './magneticbutton'
 
@@ -18,7 +18,6 @@ function Typewriter({ words, speed = 80, pause = 1800 }) {
   useEffect(() => {
     const current = words[wordIdx]
     let timeout
-
     if (!deleting && charIdx <= current.length) {
       timeout = setTimeout(() => setCharIdx(i => i + 1), speed)
     } else if (!deleting && charIdx > current.length) {
@@ -29,7 +28,6 @@ function Typewriter({ words, speed = 80, pause = 1800 }) {
       setDeleting(false)
       setWordIdx(i => (i + 1) % words.length)
     }
-
     setDisplay(current.slice(0, charIdx))
     return () => clearTimeout(timeout)
   }, [charIdx, deleting, wordIdx, words, speed, pause])
@@ -51,12 +49,12 @@ function Typewriter({ words, speed = 80, pause = 1800 }) {
 }
 
 export default function Hero() {
-  const [scrolled, setScrolled] = useState(false)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
+    const onResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
   }, [])
 
   return (
@@ -64,7 +62,7 @@ export default function Hero() {
       minHeight: '100vh',
       display: 'flex',
       alignItems: 'center',
-      padding: '120px 6vw 80px',
+      padding: isMobile ? '100px 6vw 60px' : '120px 6vw 80px',
       position: 'relative',
       overflow: 'hidden',
     }}>
@@ -80,7 +78,13 @@ export default function Hero() {
         pointerEvents: 'none',
       }} />
 
-      <div style={{ flex: 1, maxWidth: '600px', position: 'relative', zIndex: 1 }}>
+      {/* Left col */}
+      <div style={{
+        flex: 1,
+        maxWidth: isMobile ? '100%' : '600px',
+        position: 'relative',
+        zIndex: 1,
+      }}>
 
         {/* Availability badge */}
         <motion.div
@@ -103,8 +107,7 @@ export default function Hero() {
           }}
         >
           <span style={{
-            width: '6px',
-            height: '6px',
+            width: '6px', height: '6px',
             borderRadius: '50%',
             background: '#4caf50',
             display: 'inline-block',
@@ -139,14 +142,14 @@ export default function Hero() {
           Frontend Developer
         </motion.div>
 
-        {/* Headline — bumped up */}
+        {/* Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
           style={{
             fontFamily: "'Playfair Display', serif",
-            fontSize: 'clamp(64px, 9vw, 88px)',
+            fontSize: isMobile ? 'clamp(40px, 11vw, 60px)' : 'clamp(64px, 9vw, 88px)',
             lineHeight: 1.0,
             fontWeight: 700,
             color: '#e8e3d8',
@@ -156,14 +159,14 @@ export default function Hero() {
           I build websites
         </motion.h1>
 
-        {/* Typewriter — matched closer to headline */}
+        {/* Typewriter */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.65 }}
           style={{
             fontFamily: "'Playfair Display', serif",
-            fontSize: 'clamp(42px, 6.5vw, 78px)',
+            fontSize: isMobile ? 'clamp(32px, 9vw, 50px)' : 'clamp(42px, 6.5vw, 78px)',
             fontStyle: 'italic',
             color: '#c8a96e',
             marginBottom: '28px',
@@ -188,12 +191,37 @@ export default function Hero() {
           }}
         />
 
+        {/* Body — only show on desktop, hidden on mobile to save space */}
+        {!isMobile && (
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.0 }}
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '16px',
+              color: '#a09890',
+              maxWidth: '480px',
+              lineHeight: 1.8,
+              marginBottom: '40px',
+            }}
+          >
+            Hi, I'm Benedick — a modern web developer who leverages AI tools and the latest technologies to build fast, responsive, and high-quality websites.
+          </motion.p>
+        )}
+
         {/* CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.1 }}
-          style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '48px' }}
+          style={{
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            marginBottom: isMobile ? '32px' : '48px',
+          }}
         >
           <MagneticButton
             href="#projects"
@@ -201,10 +229,10 @@ export default function Hero() {
               background: '#c8a96e',
               color: '#080808',
               fontFamily: "'DM Mono', monospace",
-              fontSize: '12px',
+              fontSize: '11px',
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
-              padding: '14px 32px',
+              padding: isMobile ? '12px 24px' : '14px 32px',
               border: 'none',
               textDecoration: 'none',
               display: 'inline-block',
@@ -219,10 +247,10 @@ export default function Hero() {
               background: 'transparent',
               color: '#c8a96e',
               fontFamily: "'DM Mono', monospace",
-              fontSize: '12px',
+              fontSize: '11px',
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
-              padding: '13px 32px',
+              padding: isMobile ? '11px 24px' : '13px 32px',
               border: '1px solid #c8a96e66',
               textDecoration: 'none',
               display: 'inline-block',
@@ -231,127 +259,150 @@ export default function Hero() {
             Start a Project
           </MagneticButton>
         </motion.div>
-      </div>
 
-      {/* Photo frame */}
-      <motion.div
-        initial={{ opacity: 0, x: 40 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 0.7 }}
-        style={{
-          position: 'absolute',
-          right: '8vw',
-          top: '35%',
-          transform: 'translateY(-50%)',
-          zIndex: 1,
-        }}
-      >
-        <div style={{
-          width: '260px',
-          height: '340px',
-          border: '1px solid #1e1e1e',
-          position: 'relative',
-          overflow: 'hidden',
-          background: '#111',
-        }}>
-          {[
-            { top: '-1px', left: '-1px', borderWidth: '2px 0 0 2px' },
-            { top: '-1px', right: '-1px', borderWidth: '2px 2px 0 0' },
-            { bottom: '-1px', left: '-1px', borderWidth: '0 0 2px 2px' },
-            { bottom: '-1px', right: '-1px', borderWidth: '0 2px 2px 0' },
-          ].map((s, i) => (
-            <div key={i} style={{
-              position: 'absolute',
-              width: '22px',
-              height: '22px',
-              borderColor: '#c8a96e',
-              borderStyle: 'solid',
-              zIndex: 2,
-              ...s,
-            }} />
-          ))}
-
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to bottom, transparent 55%, #08080899)',
-            zIndex: 1,
-            pointerEvents: 'none',
-          }} />
-
-          <img
-            src="/hero.png"
-            alt="Benedick D. Miranda"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'top center',
-              display: 'block',
-            }}
-          />
-
-          <div style={{
-            position: 'absolute',
-            bottom: 0, left: 0, right: 0,
-            padding: '16px',
-            zIndex: 2,
-          }}>
-            <div style={{
-              fontFamily: "'DM Mono', monospace",
-              fontSize: '9px',
-              letterSpacing: '0.2em',
-              color: '#c8a96e',
-              textTransform: 'uppercase',
-              marginBottom: '2px',
-            }}>
-              Benedick D. Miranda
-            </div>
-            <div style={{
+        {/* Role tags */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1.3 }}
+          style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}
+        >
+          {['React', 'Tailwind CSS', 'Node.js', 'UI / UX'].map(tag => (
+            <span key={tag} style={{
               fontFamily: "'DM Mono', monospace",
               fontSize: '9px',
               letterSpacing: '0.12em',
               color: '#6b6560',
+              border: '1px solid #1e1e1e',
+              padding: '4px 10px',
               textTransform: 'uppercase',
             }}>
-              Web Developer
+              {tag}
+            </span>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Photo frame — desktop only */}
+      {!isMobile && (
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.7 }}
+          style={{
+            position: 'absolute',
+            right: '8vw',
+            top: '35%',
+            transform: 'translateY(-50%)',
+            zIndex: 1,
+          }}
+        >
+          <div style={{
+            width: '260px',
+            height: '340px',
+            border: '1px solid #1e1e1e',
+            position: 'relative',
+            overflow: 'hidden',
+            background: '#111',
+          }}>
+            {[
+              { top: '-1px', left: '-1px', borderWidth: '2px 0 0 2px' },
+              { top: '-1px', right: '-1px', borderWidth: '2px 2px 0 0' },
+              { bottom: '-1px', left: '-1px', borderWidth: '0 0 2px 2px' },
+              { bottom: '-1px', right: '-1px', borderWidth: '0 2px 2px 0' },
+            ].map((s, i) => (
+              <div key={i} style={{
+                position: 'absolute',
+                width: '22px',
+                height: '22px',
+                borderColor: '#c8a96e',
+                borderStyle: 'solid',
+                zIndex: 2,
+                ...s,
+              }} />
+            ))}
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(to bottom, transparent 55%, #08080899)',
+              zIndex: 1,
+              pointerEvents: 'none',
+            }} />
+            <img
+              src="/hero.png"
+              alt="Benedick D. Miranda"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'top center',
+                display: 'block',
+              }}
+            />
+            <div style={{
+              position: 'absolute',
+              bottom: 0, left: 0, right: 0,
+              padding: '16px',
+              zIndex: 2,
+            }}>
+              <div style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: '9px',
+                letterSpacing: '0.2em',
+                color: '#c8a96e',
+                textTransform: 'uppercase',
+                marginBottom: '2px',
+              }}>
+                Benedick D. Miranda
+              </div>
+              <div style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: '9px',
+                letterSpacing: '0.12em',
+                color: '#6b6560',
+                textTransform: 'uppercase',
+              }}>
+                Web Developer
+              </div>
             </div>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      )}
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        style={{
-          position: 'absolute',
-          bottom: '32px',
-          right: '6vw',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '8px',
-        }}
-      >
-        <div style={{
-          fontFamily: "'DM Mono', monospace",
-          fontSize: '9px',
-          letterSpacing: '0.2em',
-          color: '#6b6560',
-          textTransform: 'uppercase',
-          writingMode: 'vertical-rl',
-        }}>
-          Scroll
-        </div>
-        <div style={{
-          width: '1px',
-          height: '40px',
-          background: 'linear-gradient(to bottom, #c8a96e, transparent)',
-          animation: 'scrollLine 2s ease-in-out infinite',
-        }} />
-      </motion.div>
+      {/* Scroll indicator — desktop only */}
+      {!isMobile && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
+          style={{
+            position: 'absolute',
+            bottom: '32px',
+            right: '6vw',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          <div style={{
+            fontFamily: "'DM Mono', monospace",
+            fontSize: '9px',
+            letterSpacing: '0.2em',
+            color: '#6b6560',
+            textTransform: 'uppercase',
+            writingMode: 'vertical-rl',
+          }}>
+            Scroll
+          </div>
+          <div style={{
+            width: '1px',
+            height: '40px',
+            background: 'linear-gradient(to bottom, #c8a96e, transparent)',
+            animation: 'scrollLine 2s ease-in-out infinite',
+          }} />
+        </motion.div>
+      )}
 
       <style>{`
         @keyframes heroPulse {

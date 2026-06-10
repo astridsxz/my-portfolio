@@ -1,5 +1,5 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 
 const skills = [
   {
@@ -23,6 +23,13 @@ const skills = [
 export default function Skills() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   return (
     <section
@@ -33,7 +40,7 @@ export default function Skills() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        padding: '8rem 6vw',
+        padding: isMobile ? '6rem 6vw' : '8rem 6vw',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -87,24 +94,30 @@ export default function Skills() {
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{
             fontFamily: 'Playfair Display, serif',
-            fontSize: 'clamp(5rem, 5vw, 7rem)',
+            fontSize: isMobile ? 'clamp(3rem, 12vw, 5rem)' : 'clamp(5rem, 5vw, 7rem)',
             fontWeight: 700,
             color: '#e8e3d8',
             lineHeight: 0.9,
-             margin: 0,
+            margin: 0,
           }}
         >
           What I{' '}
-           <br />
-          <span style={{ color: '#c8a96e', fontStyle: 'italic', fontSize: 'clamp(2rem, 4vw, 3rem)', }}>work with</span>
+          <br />
+          <span style={{
+            color: '#c8a96e',
+            fontStyle: 'italic',
+            fontSize: isMobile ? 'clamp(1.8rem, 8vw, 2.5rem)' : 'clamp(2rem, 4vw, 3rem)',
+          }}>
+            work with
+          </span>
         </motion.h2>
       </div>
 
-      {/* Skills grid */}
+      {/* Skills grid — 2 cols desktop, 1 col mobile */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '4rem 6rem',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        gap: isMobile ? '3rem' : '4rem 6rem',
         position: 'relative',
         zIndex: 1,
       }}>
@@ -115,7 +128,7 @@ export default function Skills() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: i * 0.12 }}
           >
-            {/* Category */}
+            {/* Category label */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -141,7 +154,7 @@ export default function Skills() {
                   key={j}
                   initial={{ opacity: 0, scale: 0.85 }}
                   animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.25}}
+                  transition={{ duration: 0.25 }}
                   whileHover={{ y: -4, borderColor: '#c8a96e', color: '#c8a96e' }}
                   style={{
                     fontFamily: 'monospace',
